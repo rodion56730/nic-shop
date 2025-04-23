@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "items")
-public class Items {
+public class Item {
 
     private static final String SEQUENCE_NAME = "item_sequence";
 

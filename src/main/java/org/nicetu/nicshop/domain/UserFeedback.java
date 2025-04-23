@@ -34,5 +34,5 @@ public class UserFeedback {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    private Items product;
+    private Item product;
 }
