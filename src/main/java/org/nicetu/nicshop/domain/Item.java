@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -34,4 +35,7 @@ public class Item {
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
+    private ProductStatus status;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<UserFeedback> userFeedbacks = new ArrayList<>();
 }

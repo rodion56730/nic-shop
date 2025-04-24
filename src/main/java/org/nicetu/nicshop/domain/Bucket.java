@@ -2,10 +2,14 @@ package org.nicetu.nicshop.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -13,8 +17,6 @@ import java.util.List;
 public class Bucket {
 
     private static final String SEQUENCE_NAME = "bucket_sequence";
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

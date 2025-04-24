@@ -1,6 +1,7 @@
 package org.nicetu.nicshop.repository;
 
 import org.nicetu.nicshop.domain.Bucket;
+import org.nicetu.nicshop.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
