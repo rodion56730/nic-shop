@@ -20,7 +20,7 @@ public class ItemDTO {
 
     private String pictureUrl;
 
-    private String title;
+    private String name;
 
     private String description;
 
@@ -31,6 +31,6 @@ public class ItemDTO {
 
     private List<UserFeedbackDto> userFeedbackDtoList;
 
-    public ItemDTO(Long id, String image, String title, String description, ProductStatus status, BigDecimal price, List<UserFeedback> userFeedbacks) {
+    public ItemDTO(Long id, String image, String name, String description, ProductStatus status, BigDecimal price, List<UserFeedback> userFeedbacks) {
     }
 }

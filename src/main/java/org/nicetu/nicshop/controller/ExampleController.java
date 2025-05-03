@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ExampleController {
     private final UserServiceImpl userService;
-    @GetMapping("/hello")
-    public String sayHello() {
-        var user = User.builder()
-                .username("request.getUsername()")
-                .email("request.getEmail()")
-                .password("passwordEncoder.encode(request.getPassword())")
-                .role(Role.CLIENT)
-                .address("")
-                .build();
-
-        System.out.println( userService.create(user));
-        return "Hello, Spring!";
-    }
+    //@GetMapping("/hello")
+//    public String sayHello() {
+//        var user = User.builder()
+//                .username("request.getUsername()")
+//                .email("request.getEmail()")
+//                .password("passwordEncoder.encode(request.getPassword())")
+//                .roles(Role.CLIENT)
+//                .address("")
+//                .build();
+//
+//        System.out.println( userService.create(user));
+//        return "Hello, Spring!";
+//    }
 }

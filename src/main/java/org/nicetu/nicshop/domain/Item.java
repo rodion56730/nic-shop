@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +24,11 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQUENCE_NAME)
     @SequenceGenerator(name = SEQUENCE_NAME,sequenceName = SEQUENCE_NAME,allocationSize = 1)
     private Long id;
-    private String title;
+    private String name;
     private String description;
-    private BigDecimal price;
+    private Long price;
     private String image;
-    private String count;
+    private int count;
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "items_categories",
             joinColumns = @JoinColumn(name = "item_id"),
@@ -38,4 +37,16 @@ public class Item {
     private ProductStatus status;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<UserFeedback> userFeedbacks = new ArrayList<>();
+
+    @Column(name = "discount")
+    private Boolean discount;
+    @Column(name = "discount_price")
+    private Long discountPrice;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcategory_id")
+    private Category category;
+    private String nameProperty;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_property_id")
+    private ProductProperty productProperty;
 }

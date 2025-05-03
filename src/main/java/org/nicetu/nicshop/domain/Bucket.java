@@ -28,4 +28,6 @@ public class Bucket {
             joinColumns = @JoinColumn(name = "bucket_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<Item> items;
+    @Column(name = "amount")
+    private Long amount;
 }

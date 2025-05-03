@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +33,7 @@ public class UserServiceImpl implements UserService {
                 .username(userDTO.getUsername())
                 .password(userDTO.getPassword())
                 .email(userDTO.getEmail())
-                .role(Role.CLIENT)
+                .roles(new HashSet<>(Set.of(Role.CLIENT)))
                 .build();
         userRepository.save(user);
         return true;
@@ -52,8 +50,7 @@ public class UserServiceImpl implements UserService {
         if(user == null){
             throw new UsernameNotFoundException(username);
         }
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(user.getRole().name()));
+        List<GrantedAuthority> roles = new ArrayList<>(user.getRoles().stream().map(it -> new SimpleGrantedAuthority(it.name())).toList());
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(),
                 roles
@@ -89,9 +86,9 @@ public class UserServiceImpl implements UserService {
      *
      * @return пользователь
      */
-    public UserDetailsService userDetailsService() {
-        return this::getByUsername;
-    }
+//    public UserDetailsService userDetailsService() {
+//        return this::getByUsername;
+//    }
 
     /**
      * Получение текущего пользователя
@@ -113,7 +110,7 @@ public class UserServiceImpl implements UserService {
     @Deprecated
     public void setAdmin() {
         var user = getCurrentUser();
-        user.setRole(Role.ADMIN);
+        user.setRoles(Collections.singleton(Role.ADMIN));
         save(user);
     }
 

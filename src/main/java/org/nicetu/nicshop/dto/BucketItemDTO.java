@@ -1,20 +1,24 @@
 package org.nicetu.nicshop.dto;
 
-import lombok.AllArgsConstructor;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BucketItemDTO {
-    private Long itemId;
-    private String itemName;
-    private BigDecimal itemPrice;
-    private int quantity;
-    private BigDecimal totalPrice;
+    @Schema(description = "Ссылка на картинку для товара", required = true)
+    private String pictureUrl;
+
+    @Schema(description = "Название товара", required = true)
+    private String name;
+
+    @Schema(description = "Цена на товар", required = true)
+    private Long price;
+
+    @Schema(description = "Количество товара в магазине", required = true)
+    private Long amount;
 }

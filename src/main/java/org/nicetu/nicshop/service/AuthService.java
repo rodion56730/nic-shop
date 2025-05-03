@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -69,7 +70,7 @@ public class AuthService {
         user.setEmail(request.getUserEmail());
         user.setPassword(passwordEncoder.encode(request.getUserPassword()));
         user.setUsername(request.getFirstName() + " " + request.getLastName());
-        user.setRole(Role.CLIENT);
+        user.setRoles(new HashSet<>(Set.of(Role.CLIENT)));
         userRepo.save(user);
 
         return user;
