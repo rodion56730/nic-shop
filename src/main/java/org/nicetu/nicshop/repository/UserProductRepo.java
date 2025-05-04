@@ -16,5 +16,4 @@ public interface UserProductRepo extends JpaRepository<BucketItem, Long> {
 
     Optional<BucketItem> findByProductAndUser(Item item, User user);
 
-    Boolean existsByNameAndUser(String title, User user);
 }

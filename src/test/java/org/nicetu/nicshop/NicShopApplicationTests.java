@@ -3,6 +3,7 @@ package org.nicetu.nicshop;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
+import org.nicetu.nicshop.domain.Item;
 import org.nicetu.nicshop.domain.User;
 import org.nicetu.nicshop.dto.JwtResponseDto;
 import org.nicetu.nicshop.repository.BucketRepository;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -41,6 +44,8 @@ class NicShopApplicationTests {
     private final AuthService authService;
     private final JwtProvider jwtProvider;
     private final UserRepository userRepo;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     public NicShopApplicationTests(
@@ -77,6 +82,10 @@ class NicShopApplicationTests {
         return JwtUtils.getAuthentication(claims);
     }
 
+    private void logoutUser() {
+        authService.deleteAllById(1L);
+    }
+
     @Test
     void checkEmptyCart() throws Exception {
         mockMvc
@@ -97,17 +106,23 @@ class NicShopApplicationTests {
 
     @Test
     void addProduct() throws Exception {
+        // Создаем тестовый товар
+        Item testItem = new Item();
+        testItem.setId(1L);
+        testItem.setName("Test Product");
+        testItem.setPrice(100L);
+        productRepo.save(testItem); // или используйте мок
+
         AddProductRequest request = new AddProductRequest();
         request.setProductId(1L);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        byte[] bytes = objectMapper.writeValueAsBytes(request);
-
-        mockMvc
-                .perform(post("/api/addProduct").contentType(MediaType.APPLICATION_JSON)
-                        .content(bytes))
+        mockMvc.perform(post("/api/addProduct")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(authentication(authUser())))// Добавляем токен
                 .andExpect(status().isOk())
                 .andExpect(cookie().exists("user_product_1"));
+        logoutUser();
     }
 
     @Test
@@ -134,6 +149,8 @@ class NicShopApplicationTests {
         mockMvc.perform(get("/api/cart").contentType(MediaType.APPLICATION_JSON)
                         .with(authentication(authUser())))
                 .andExpect(jsonPath("$.count").value(cartCount + 1));
+        logoutUser();
+
     }
 
     @Test
@@ -152,6 +169,8 @@ class NicShopApplicationTests {
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.categoryCount").value(productsCount))
                 .andExpect(jsonPath("$.cartCount").value(cartCount));
+        logoutUser();
+
     }
 
     @Test
@@ -185,6 +204,8 @@ class NicShopApplicationTests {
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.price").value(productPrice))
                 .andExpect(jsonPath("$.title").value(productTitle));
+        logoutUser();
+
     }
 
     @Test
@@ -213,5 +234,7 @@ class NicShopApplicationTests {
         mockMvc.perform(delete("/api/cart/deleteProduct").contentType(MediaType.APPLICATION_JSON)
                         .content(bytes).with(authentication(authUser())))
                 .andExpect(status().isOk());
+        logoutUser();
+
     }
 }

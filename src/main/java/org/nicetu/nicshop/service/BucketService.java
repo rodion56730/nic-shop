@@ -172,9 +172,7 @@ public class BucketService {
             User user = userRepo.findById(authentication.getUserId()).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
 
-            if (userProductRepo.existsByNameAndUser(item.getName(), user)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Товар уже в корзине");
-            }
+
 
             BucketItem userProduct = new BucketItem();
             userProduct.setUser(user);

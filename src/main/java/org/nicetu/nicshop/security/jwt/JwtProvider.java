@@ -38,8 +38,8 @@ public class JwtProvider {
     public TokenResponse generateAccessToken(User user) {
         Instant expiration = Instant.now().plus(jwtAccessDurationSec, ChronoUnit.SECONDS);
         String token = Jwts.builder()
-                .setSubject(String.valueOf(user.getId()))
-                .setExpiration(Date.from(expiration))
+                .subject(String.valueOf(user.getId()))
+                .issuedAt(Date.from(expiration))
                 .signWith(jwtAccessSecret)
                 .claim("roles", user.getRoles())
                 .compact();
@@ -49,8 +49,8 @@ public class JwtProvider {
     public TokenResponse generateRefreshToken(User user) {
         Instant expiration = Instant.now().plus(jwtRefreshDurationDays, ChronoUnit.DAYS);
         String token = Jwts.builder()
-                .setSubject(String.valueOf(user.getId()))
-                .setExpiration(Date.from(expiration))
+                .subject(String.valueOf(user.getId()))
+                .issuedAt(Date.from(expiration))
                 .signWith(jwtRefreshSecret)
                 .compact();
         return new TokenResponse(token, expiration);
@@ -67,9 +67,9 @@ public class JwtProvider {
     private boolean validateToken(String token, Key secret) {
         try {
             Jwts.parser()
-                    .setSigningKey(secret)
+                    .verifyWith((SecretKey) secret)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
             return true;
 
         } catch (SignatureException e) {
@@ -97,7 +97,7 @@ public class JwtProvider {
 
     private Claims getClaims(String token, Key secret) {
         return Jwts.parser()
-                .verifyWith((SecretKey) secret)
+                .verifyWith(Keys.hmacShaKeyFor(secret.getEncoded()))
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

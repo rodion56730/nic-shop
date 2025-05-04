@@ -24,7 +24,6 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private UserServiceImpl userService;
     private final JwtAuthEntryPoint unauthorizedHandler;
     private final JwtFilter jwtFilter;
 
@@ -36,13 +35,8 @@ public class SecurityConfig {
     ) {
         this.unauthorizedHandler = unauthorizedHandler;
         this.jwtFilter = tokenFilter;
-        this.userService = userService;
     }
 
-    @Autowired
-    public void setUserService(UserServiceImpl userService) {
-        this.userService = userService;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

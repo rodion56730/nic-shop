@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_product")
+@Table(name = "buckets_items")
 @Getter
 @Setter
 @NoArgsConstructor
 public class BucketItem {
     @Id
-    @Column(name = "user_product_id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -21,11 +21,10 @@ public class BucketItem {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "item_id")
     private Item product;
 
-    @Column(name = "amount")
+    @Column(name = "count")
     private Long amount;
 
-    private String name;
 }

@@ -16,7 +16,7 @@ public interface BucketItemMapper {
         userProductDto.setPictureUrl(userProduct.getProduct().getImage());
         userProductDto.setName(userProduct.getProduct().getName());
         userProductDto.setPrice(ProductUtil.getPrice(userProduct.getProduct(), authentication));
-        userProductDto.setPrice(userProduct.getAmount());
+        userProductDto.setAmount(userProduct.getAmount());
 
         return userProductDto;
     }

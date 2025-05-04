@@ -34,7 +34,6 @@ public class Item {
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
-    private ProductStatus status;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<UserFeedback> userFeedbacks = new ArrayList<>();
 
@@ -43,10 +42,11 @@ public class Item {
     @Column(name = "discount_price")
     private Long discountPrice;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subcategory_id")
+    @JoinColumn(name = "category_id")
     private Category category;
-    private String nameProperty;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_property_id")
     private ProductProperty productProperty;
+
 }

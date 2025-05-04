@@ -25,13 +25,13 @@ public class User  {
     private String username;
     private String password;
     private String email;
-    @ElementCollection(targetClass = Role.class)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Set<Role> roles = new HashSet<>();
-    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
-    private Bucket bucket;
+//    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+//    private Bucket bucket;
     private String address;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserFeedback> userFeedbacks = new ArrayList<>();

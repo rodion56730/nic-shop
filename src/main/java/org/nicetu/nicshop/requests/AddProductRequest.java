@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 @Getter
 @Setter
 public class AddProductRequest {
-    @Schema(description = "Id товара, который надо добавить", required = true)
+    @Schema(description = "Id товара, который надо добавить")
     @NotNull
     private Long productId;
 }

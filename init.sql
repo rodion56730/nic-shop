@@ -277,8 +277,8 @@ values (1, 111, 'Модель', 'Apple IPhone 12'),
 
 
 insert into items (id,category_id, name, description, count, image, price, discount_price, discount, product_property_id)
-values (1, 111, 'Apple IPhone 12', 'Дисплей',
+values (1, 11, 'Apple IPhone 12', 'Дисплей',
         3, 'https://cdn.svyaznoy.ru/upload/iblock/7f2/ruru_iphone12_q121_white_pdp-image-1b.jpg/resize/453x480/',
-        65000, 63000, true, 11);
+        65000, 63000, true, 111);
 
 

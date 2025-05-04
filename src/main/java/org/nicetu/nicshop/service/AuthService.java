@@ -7,6 +7,7 @@ import org.nicetu.nicshop.domain.RefreshToken;
 import org.nicetu.nicshop.domain.Role;
 import org.nicetu.nicshop.domain.User;
 import org.nicetu.nicshop.dto.JwtResponseDto;
+import org.nicetu.nicshop.repository.BucketRepository;
 import org.nicetu.nicshop.repository.RefreshTokenRepo;
 import org.nicetu.nicshop.repository.UserRepository;
 import org.nicetu.nicshop.requests.AuthRequest;
@@ -69,9 +70,10 @@ public class AuthService {
         User user = new User();
         user.setEmail(request.getUserEmail());
         user.setPassword(passwordEncoder.encode(request.getUserPassword()));
-        user.setUsername(request.getFirstName() + " " + request.getLastName());
-        user.setRoles(new HashSet<>(Set.of(Role.CLIENT)));
+        user.setUsername(request.getUserEmail());
+        user.setRoles(Set.of(Role.CLIENT));
         userRepo.save(user);
+
 
         return user;
     }
