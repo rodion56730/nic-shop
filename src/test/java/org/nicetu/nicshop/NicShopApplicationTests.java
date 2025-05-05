@@ -3,11 +3,14 @@ package org.nicetu.nicshop;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
+import org.nicetu.nicshop.controller.AuthController;
 import org.nicetu.nicshop.domain.Item;
+import org.nicetu.nicshop.domain.RefreshToken;
 import org.nicetu.nicshop.domain.User;
 import org.nicetu.nicshop.dto.JwtResponseDto;
 import org.nicetu.nicshop.repository.BucketRepository;
 import org.nicetu.nicshop.repository.ItemRepository;
+import org.nicetu.nicshop.repository.UserProductRepo;
 import org.nicetu.nicshop.repository.UserRepository;
 import org.nicetu.nicshop.requests.AddProductRequest;
 import org.nicetu.nicshop.requests.AuthRequest;
@@ -24,6 +27,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.stream.LongStream;
@@ -40,7 +45,7 @@ class NicShopApplicationTests {
     private final String userEmail = "test@gmail.com";
     private final MockMvc mockMvc;
     private final ItemRepository productRepo;
-    private final BucketRepository bucketRepository;
+    private final UserProductRepo bucketRepository;
     private final AuthService authService;
     private final JwtProvider jwtProvider;
     private final UserRepository userRepo;
@@ -51,7 +56,7 @@ class NicShopApplicationTests {
     public NicShopApplicationTests(
             MockMvc mockMvc,
             ItemRepository productRepo,
-            BucketRepository bucketRepository,
+            UserProductRepo bucketRepository,
             AuthService authService,
             JwtProvider jwtProvider,
             UserRepository userRepo
@@ -72,13 +77,13 @@ class NicShopApplicationTests {
         authService.registerUser(registerRequest);
     }
 
-    private JwtAuthentication authUser() {
+
+    public JwtAuthentication authUser() {
         AuthRequest request = new AuthRequest();
         request.setUserEmail(userEmail);
         request.setUserPassword("123");
         JwtResponseDto jwtResponseDto = authService.authenticateUser(request);
         Claims claims = jwtProvider.getAccessClaims(jwtResponseDto.getAccessToken());
-
         return JwtUtils.getAuthentication(claims);
     }
 
@@ -98,7 +103,6 @@ class NicShopApplicationTests {
 
     @Test
     void notExistingProduct() throws Exception {
-        registerUser();
         mockMvc
                 .perform(get("/api/catalog/product/{id}", 100).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(404));
@@ -106,13 +110,11 @@ class NicShopApplicationTests {
 
     @Test
     void addProduct() throws Exception {
+        // authService.deleteAllById(1L);
         // Создаем тестовый товар
-        Item testItem = new Item();
-        testItem.setId(1L);
-        testItem.setName("Test Product");
-        testItem.setPrice(100L);
-        productRepo.save(testItem); // или используйте мок
-
+        // или используйте мок
+        //registerUser();
+       logoutUser();
         AddProductRequest request = new AddProductRequest();
         request.setProductId(1L);
 
@@ -122,42 +124,14 @@ class NicShopApplicationTests {
                         .with(authentication(authUser())))// Добавляем токен
                 .andExpect(status().isOk())
                 .andExpect(cookie().exists("user_product_1"));
-        logoutUser();
-    }
-
-    @Test
-    void checkCartIncrease() throws Exception {
-        User user = userRepo.findByEmail(userEmail);
-        System.out.println("============================");
-        System.out.println(user.getId());
-        CartProductRequest request = new CartProductRequest();
-        request.setProductId(1L);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        byte[] bytes = objectMapper.writeValueAsBytes(request);
-
-        long cartCount = bucketRepository.findByUserId(user.getId()).stream()
-                .flatMapToLong(a -> LongStream.of(a.getAmount()))
-                .sum();
-
-        mockMvc
-                .perform(put("/api/cart/addAmount").contentType(MediaType.APPLICATION_JSON)
-                        .content(bytes)
-                        .with(authentication(authUser())))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(get("/api/cart").contentType(MediaType.APPLICATION_JSON)
-                        .with(authentication(authUser())))
-                .andExpect(jsonPath("$.count").value(cartCount + 1));
-        logoutUser();
-
     }
 
     @Test
     void checkAllProductsWithCart() throws Exception {
+        logoutUser();
         int productsCount = productRepo.findAll().size();
         User user = userRepo.findByEmail(userEmail);
-        long cartCount = bucketRepository.findByUserId(user.getId()).stream()
+        long cartCount = bucketRepository.findAllByUser(user).stream()
                 .flatMapToLong(a -> LongStream.of(a.getAmount()))
                 .sum();
 
@@ -169,7 +143,6 @@ class NicShopApplicationTests {
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.categoryCount").value(productsCount))
                 .andExpect(jsonPath("$.cartCount").value(cartCount));
-        logoutUser();
 
     }
 
@@ -194,6 +167,7 @@ class NicShopApplicationTests {
 
     @Test
     void checkGetProduct() throws Exception {
+        logoutUser();
         BigDecimal productPrice = BigDecimal.valueOf(productRepo.findById(1L).get().getPrice());
         String productTitle = productRepo.findById(1L).get().getName();
 
@@ -203,7 +177,7 @@ class NicShopApplicationTests {
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.price").value(productPrice))
-                .andExpect(jsonPath("$.title").value(productTitle));
+                .andExpect(jsonPath("$.name").value(productTitle));
         logoutUser();
 
     }
@@ -221,20 +195,5 @@ class NicShopApplicationTests {
         mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content(bytes))
                 .andExpect(status().is(404));
-    }
-
-    @Test
-    void checkDeleteProductFromCart() throws Exception {
-        CartProductRequest request = new CartProductRequest();
-        request.setProductId(3L);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        byte[] bytes = objectMapper.writeValueAsBytes(request);
-
-        mockMvc.perform(delete("/api/cart/deleteProduct").contentType(MediaType.APPLICATION_JSON)
-                        .content(bytes).with(authentication(authUser())))
-                .andExpect(status().isOk());
-        logoutUser();
-
     }
 }

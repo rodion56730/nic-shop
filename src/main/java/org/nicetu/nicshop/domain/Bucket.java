@@ -25,7 +25,6 @@ public class Bucket {
     private User user;
     @ManyToMany
     @JoinTable(name = "buckets_items",
-            joinColumns = @JoinColumn(name = "bucket_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<Item> items;
     @Column(name = "amount")

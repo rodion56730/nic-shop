@@ -36,6 +36,18 @@ spring:
     enabled: true
     locations: classpath:db.migration
     community-db-support-enabled: true
+logging:
+  level:
+    # Логирование Flyway
+    org.flywaydb: DEBUG
+    # Логирование SQL-запросов
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    org.springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+    # Логирование инициализации Spring Boot
+    org.springframework.boot: DEBUG
+    # Логирование подключения к БД
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 shop:
   jwt:
     secret:

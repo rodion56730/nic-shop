@@ -15,6 +15,8 @@ import java.sql.Date;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+
+
 @Slf4j
 @Component
 public class JwtProvider {
@@ -36,10 +38,16 @@ public class JwtProvider {
     }
 
     public TokenResponse generateAccessToken(User user) {
-        Instant expiration = Instant.now().plus(jwtAccessDurationSec, ChronoUnit.SECONDS);
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        Instant now = Instant.now();
+        Instant expiration = now.plus(jwtAccessDurationSec, ChronoUnit.SECONDS);
         String token = Jwts.builder()
                 .subject(String.valueOf(user.getId()))
-                .issuedAt(Date.from(expiration))
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(expiration))
                 .signWith(jwtAccessSecret)
                 .claim("roles", user.getRoles())
                 .compact();
@@ -47,20 +55,32 @@ public class JwtProvider {
     }
 
     public TokenResponse generateRefreshToken(User user) {
-        Instant expiration = Instant.now().plus(jwtRefreshDurationDays, ChronoUnit.DAYS);
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        Instant now = Instant.now();
+        Instant expiration = now.plus(jwtRefreshDurationDays, ChronoUnit.DAYS);
         String token = Jwts.builder()
                 .subject(String.valueOf(user.getId()))
-                .issuedAt(Date.from(expiration))
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(expiration))
                 .signWith(jwtRefreshSecret)
                 .compact();
         return new TokenResponse(token, expiration);
     }
 
     public boolean validateAccessToken(String accessToken) {
+        if (accessToken == null || accessToken.isBlank()) {
+            return false;
+        }
         return validateToken(accessToken, jwtAccessSecret);
     }
 
     public boolean validateRefreshToken(String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            return false;
+        }
         return validateToken(refreshToken, jwtRefreshSecret);
     }
 
@@ -71,7 +91,6 @@ public class JwtProvider {
                     .build()
                     .parseSignedClaims(token);
             return true;
-
         } catch (SignatureException e) {
             log.error("Invalid token signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
@@ -83,7 +102,6 @@ public class JwtProvider {
         } catch (IllegalArgumentException e) {
             log.error("Token claims string is empty: {}", e.getMessage());
         }
-
         return false;
     }
 
@@ -97,7 +115,7 @@ public class JwtProvider {
 
     private Claims getClaims(String token, Key secret) {
         return Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(secret.getEncoded()))
+                .verifyWith((SecretKey) secret)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
