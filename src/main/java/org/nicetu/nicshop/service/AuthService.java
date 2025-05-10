@@ -7,7 +7,6 @@ import org.nicetu.nicshop.domain.RefreshToken;
 import org.nicetu.nicshop.domain.Role;
 import org.nicetu.nicshop.domain.User;
 import org.nicetu.nicshop.dto.JwtResponseDto;
-import org.nicetu.nicshop.repository.BucketRepository;
 import org.nicetu.nicshop.repository.RefreshTokenRepo;
 import org.nicetu.nicshop.repository.UserRepository;
 import org.nicetu.nicshop.requests.AuthRequest;
@@ -16,12 +15,11 @@ import org.nicetu.nicshop.requests.RegisterRequest;
 import org.nicetu.nicshop.security.jwt.JwtProvider;
 import org.nicetu.nicshop.security.jwt.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.HashSet;
 import java.util.Set;
 
 @Service

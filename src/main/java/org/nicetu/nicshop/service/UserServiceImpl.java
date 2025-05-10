@@ -5,21 +5,21 @@ import org.nicetu.nicshop.domain.Role;
 import org.nicetu.nicshop.domain.User;
 import org.nicetu.nicshop.dto.UserDTO;
 import org.nicetu.nicshop.repository.UserRepository;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@EnableJpaRepositories
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -59,7 +59,6 @@ public class UserServiceImpl implements UserService {
 
     public User create(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            // Заменить на свои исключения
             throw new RuntimeException("Пользователь с таким именем уже существует");
         }
 
@@ -78,17 +77,6 @@ public class UserServiceImpl implements UserService {
     public User getByUsername(String username) {
         return userRepository.findByUsername(username);
     }
-
-    /**
-     * Получение пользователя по имени пользователя
-     * <p>
-     * Нужен для Spring Security
-     *
-     * @return пользователь
-     */
-//    public UserDetailsService userDetailsService() {
-//        return this::getByUsername;
-//    }
 
     /**
      * Получение текущего пользователя

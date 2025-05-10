@@ -3,18 +3,21 @@ spring:
     user:
       name: postgres
       password: password
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/e-shop
-    username: postgres
-    password: password
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
   jpa:
-    database: postgresql
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-    properties:
+      database: postgresql
       hibernate:
-        format_sql: true
+        ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
   mail:
     default-encoding: UTF-8
     host: smtp.gmail.com
@@ -30,12 +33,13 @@ spring:
     protocol: smtp
     test-connection: false
   flyway:
-    url: "jdbc:postgresql://localhost:5432/e-shop"
+    url: "jdbc:postgresql://e_shop_db:5432/e-shop"
     user: postgres
     password: password
     enabled: true
     locations: classpath:db.migration
     community-db-support-enabled: true
+    clean-disabled: false
 logging:
   level:
     # Логирование Flyway
@@ -53,7 +57,5 @@ shop:
     secret:
       access: "M+9HLgODaHfqzPmg1IRQw+0R80q98WqwqrNysheVBy/fwSE2MaIlZ4fm74rrEbtX5n9cUf6GbGj/+deFKiDrDg=="
       refresh: "JkTtZdCbDJgE4ssjHV1bo8JACKTc6NybAGvHv4Cw5BnfhM3H8gp3736txkW1ZLG5ygUaxy2gCDkWw1rhYIR3DQ=="
-    expires:
-      access-sec: 604800
-      refresh-days: 30
+
 

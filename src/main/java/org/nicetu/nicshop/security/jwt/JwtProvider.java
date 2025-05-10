@@ -27,14 +27,13 @@ public class JwtProvider {
 
     public JwtProvider(
             @Value("${shop.jwt.secret.access}") String jwtAccessSecret,
-            @Value("${shop.jwt.secret.refresh}") String jwtRefreshSecret,
-            @Value("${shop.jwt.expires.access-sec}") int accessDuration,
-            @Value("${shop.jwt.expires.refresh-days}") int refreshDuration
+            @Value("${shop.jwt.secret.refresh}") String jwtRefreshSecret
     ) {
+
         this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret));
         this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret));
-        this.jwtAccessDurationSec = accessDuration;
-        this.jwtRefreshDurationDays = refreshDuration;
+        this.jwtAccessDurationSec = 604800;
+        this.jwtRefreshDurationDays = 30;
     }
 
     public TokenResponse generateAccessToken(User user) {

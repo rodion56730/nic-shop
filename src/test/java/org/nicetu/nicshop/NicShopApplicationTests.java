@@ -3,18 +3,14 @@ package org.nicetu.nicshop;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
-import org.nicetu.nicshop.controller.AuthController;
-import org.nicetu.nicshop.domain.Item;
-import org.nicetu.nicshop.domain.RefreshToken;
+
 import org.nicetu.nicshop.domain.User;
 import org.nicetu.nicshop.dto.JwtResponseDto;
-import org.nicetu.nicshop.repository.BucketRepository;
 import org.nicetu.nicshop.repository.ItemRepository;
 import org.nicetu.nicshop.repository.UserProductRepo;
 import org.nicetu.nicshop.repository.UserRepository;
 import org.nicetu.nicshop.requests.AddProductRequest;
 import org.nicetu.nicshop.requests.AuthRequest;
-import org.nicetu.nicshop.requests.CartProductRequest;
 import org.nicetu.nicshop.requests.RegisterRequest;
 import org.nicetu.nicshop.security.jwt.JwtAuthentication;
 import org.nicetu.nicshop.security.jwt.JwtProvider;
@@ -24,18 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.test.context.TestPropertySource;
+
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.math.BigDecimal;
 import java.util.stream.LongStream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

@@ -7,6 +7,7 @@ import org.nicetu.nicshop.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,8 +31,7 @@ public class SecurityConfig {
     @Autowired
     public SecurityConfig(
             JwtAuthEntryPoint unauthorizedHandler,
-            JwtFilter tokenFilter,
-            UserServiceImpl userService
+            JwtFilter tokenFilter
     ) {
         this.unauthorizedHandler = unauthorizedHandler;
         this.jwtFilter = tokenFilter;
