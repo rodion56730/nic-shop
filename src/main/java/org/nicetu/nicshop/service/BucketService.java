@@ -9,12 +9,12 @@ import org.nicetu.nicshop.dto.BucketItemDTO;
 import org.nicetu.nicshop.mappers.BucketItemMapper;
 import org.nicetu.nicshop.mappers.CartMapper;
 import org.nicetu.nicshop.repository.ItemRepository;
-import org.nicetu.nicshop.repository.UserProductRepo;
+import org.nicetu.nicshop.repository.UserItemRepository;
 import org.nicetu.nicshop.repository.UserRepository;
-import org.nicetu.nicshop.requests.AddProductRequest;
-import org.nicetu.nicshop.requests.CartProductRequest;
+import org.nicetu.nicshop.requests.AddItemRequest;
+import org.nicetu.nicshop.requests.CartItemRequest;
 import org.nicetu.nicshop.security.jwt.JwtAuthentication;
-import org.nicetu.nicshop.utils.ProductUtil;
+import org.nicetu.nicshop.utils.ItemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ import java.util.List;
 
 @Service
 public class BucketService {
-    private final UserProductRepo userProductRepo;
+    private final UserItemRepository userItemRepository;
     private final UserRepository userRepo;
     private final ItemRepository productRepo;
     private final CookieService cookieService;
@@ -40,13 +40,13 @@ public class BucketService {
 
 
     @Autowired
-    public BucketService(UserProductRepo userProductRepo,
-                       UserRepository userRepo,
-                       ItemRepository productRepo,
+    public BucketService(UserItemRepository userItemRepository,
+                         UserRepository userRepo,
+                         ItemRepository productRepo,
                          CookieService cookieService,
                          EmailService emailService
     ) {
-        this.userProductRepo = userProductRepo;
+        this.userItemRepository = userItemRepository;
         this.userRepo = userRepo;
         this.productRepo = productRepo;
         this.cookieService = cookieService;
@@ -58,7 +58,7 @@ public class BucketService {
             User user = userRepo.findById(authentication.getUserId()).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
 
-            List<BucketItem> userProducts = userProductRepo.findAllByUser(user);
+            List<BucketItem> userProducts = userItemRepository.findAllByUser(user);
             List<BucketItemDTO> userProductDtos = BucketItemMapper.fromUserProductsToDtos(userProducts, authentication);
 
             return CartMapper.fromUserProductDTOListToCartDto(userProductDtos);
@@ -90,7 +90,7 @@ public class BucketService {
     }
 
     @Transactional
-    public void reduceAmount(CartProductRequest request, JwtAuthentication authentication) {
+    public void reduceAmount(CartItemRequest request, JwtAuthentication authentication) {
         Item product = productRepo.findById(request.getProductId()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
 
@@ -98,16 +98,16 @@ public class BucketService {
             User user = userRepo.findById(authentication.getUserId()).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
 
-            BucketItem userProduct = userProductRepo.findByProductAndUser(product, user).orElseThrow(() ->
+            BucketItem userProduct = userItemRepository.findByItemAndUser(product, user).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар в корзине не найден"));
 
             Long amount = userProduct.getAmount();
 
             if (amount - 1 == 0) {
-                userProductRepo.delete(userProduct);
+                userItemRepository.delete(userProduct);
             } else {
                 userProduct.setAmount(amount - 1);
-                userProductRepo.save(userProduct);
+                userItemRepository.save(userProduct);
             }
         } else {
             Cookie cookie = cookieService.getCookie("user_product_" + product.getId());
@@ -125,7 +125,7 @@ public class BucketService {
     }
 
     @Transactional
-    public void addAmount(CartProductRequest request, JwtAuthentication authentication) {
+    public void addAmount(CartItemRequest request, JwtAuthentication authentication) {
         Item product = productRepo.findById(request.getProductId()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
 
@@ -133,7 +133,7 @@ public class BucketService {
             User user = userRepo.findById(authentication.getUserId()).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
 
-            BucketItem userProduct = userProductRepo.findByProductAndUser(product, user).orElseThrow(() ->
+            BucketItem userProduct = userItemRepository.findByItemAndUser(product, user).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар в корзине не найден"));
 
             Long amount = userProduct.getAmount();
@@ -142,7 +142,7 @@ public class BucketService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Такого количества товара нет на складе");
             } else {
                 userProduct.setAmount(amount + 1);
-                userProductRepo.save(userProduct);
+                userItemRepository.save(userProduct);
             }
         } else {
             Cookie cookie = cookieService.getCookie("user_product_" + product.getId());
@@ -160,7 +160,7 @@ public class BucketService {
     }
 
     @Transactional
-    public void addProduct(AddProductRequest request, JwtAuthentication authentication) {
+    public void addProduct(AddItemRequest request, JwtAuthentication authentication) {
         Item item = productRepo.findById(request.getProductId()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
 
@@ -176,9 +176,9 @@ public class BucketService {
 
             BucketItem userProduct = new BucketItem();
             userProduct.setUser(user);
-            userProduct.setProduct(item);
+            userProduct.setItem(item);
             userProduct.setAmount(1L);
-            userProductRepo.save(userProduct);
+            userItemRepository.save(userProduct);
         } else {
             JSONObject json = new JSONObject();
             json.put("pictureUrl", item.getImage());
@@ -190,7 +190,7 @@ public class BucketService {
     }
 
     @Transactional
-    public void deleteProduct(CartProductRequest request, JwtAuthentication authentication) {
+    public void deleteProduct(CartItemRequest request, JwtAuthentication authentication) {
         Item product = productRepo.findById(request.getProductId()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
 
@@ -198,10 +198,10 @@ public class BucketService {
             User user = userRepo.findById(authentication.getUserId()).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
 
-            BucketItem userProduct = userProductRepo.findByProductAndUser(product, user).orElseThrow(() ->
+            BucketItem userProduct = userItemRepository.findByItemAndUser(product, user).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар в корзине не найден"));
 
-            userProductRepo.delete(userProduct);
+            userItemRepository.delete(userProduct);
         } else {
             cookieService.getCookie("user_product_" + product.getId());
             cookieService.deleteCookie("user_product_" + product.getId());
@@ -215,13 +215,13 @@ public class BucketService {
             User user = userRepo.findById(authentication.getUserId()).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
 
-            List<BucketItem> userProducts = userProductRepo.findAllByUser(user);
+            List<BucketItem> userProducts = userItemRepository.findAllByUser(user);
 
             StringBuilder message = new StringBuilder();
             long fullPrice = 0L;
 
             for (BucketItem userProduct: userProducts) {
-                Item product = userProduct.getProduct();
+                Item product = userProduct.getItem();
                 int productAmount = product.getCount();
                 if (productAmount <= 0) {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Продукта " + product.getName()
@@ -230,7 +230,7 @@ public class BucketService {
                 if (productAmount < userProduct.getAmount()) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "В начилии только " + productAmount);
                 }
-                Long productPrice = ProductUtil.getPrice(product, authentication);
+                Long productPrice = ItemUtil.getPrice(product, authentication);
                 Long userProductPrice = userProduct.getAmount();
                 fullPrice += productPrice * userProductPrice;
                 product.setCount((int) (productAmount - userProduct.getAmount()));
@@ -249,7 +249,7 @@ public class BucketService {
                     .append(fullPrice);
 
             emailService.sendSimpleEmail(user.getEmail(), "Shop Transaction", String.valueOf(message));
-            userProductRepo.deleteAllByUser(user);
+            userItemRepository.deleteAllByUser(user);
         } else {
             Cookie[] cookies = cookieService.getAllCookies();
 

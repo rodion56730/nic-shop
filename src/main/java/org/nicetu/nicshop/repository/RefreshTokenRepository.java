@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
-public interface RefreshTokenRepo extends JpaRepository<RefreshToken, Long> {
+public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     Optional<RefreshToken> findByToken(String token);
 
     @Modifying

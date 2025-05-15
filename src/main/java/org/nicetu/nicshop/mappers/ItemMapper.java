@@ -2,14 +2,13 @@ package org.nicetu.nicshop.mappers;
 
 import org.nicetu.nicshop.domain.Category;
 import org.nicetu.nicshop.domain.Item;
-import org.nicetu.nicshop.domain.ProductProperty;
+import org.nicetu.nicshop.domain.ItemProperty;
 import org.nicetu.nicshop.dto.ItemDTO;
 import org.nicetu.nicshop.dto.UserFeedbackDto;
-import org.nicetu.nicshop.requests.admin.ProductRequest;
+import org.nicetu.nicshop.requests.admin.ItemRequest;
 import org.nicetu.nicshop.security.jwt.JwtAuthentication;
-import org.nicetu.nicshop.utils.ProductUtil;
+import org.nicetu.nicshop.utils.ItemUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface ItemMapper {
@@ -20,8 +19,8 @@ public interface ItemMapper {
         productDto.setPictureUrl(product.getImage());
         productDto.setName(product.getName());
         productDto.setDescription(product.getDescription());
-        productDto.setStatus(ProductUtil.getStatus(product));
-        productDto.setPrice(ProductUtil.getPrice(product, authentication));
+        productDto.setStatus(ItemUtil.getStatus(product));
+        productDto.setPrice(ItemUtil.getPrice(product, authentication));
         productDto.setUserFeedbackDtoList(userFeedbackDtos);
 
         return productDto;
@@ -34,7 +33,7 @@ public interface ItemMapper {
 //                .collect(Collectors.toList());
 //    }
 
-    static Item fromProductRequestToProduct(ProductRequest request, ProductProperty productProperty, Category subcategory) {
+    static Item fromProductRequestToProduct(ItemRequest request, ItemProperty itemProperty, Category subcategory) {
         Item product = new Item();
         product.setId(request.getId());
 //        product.setProductProperty(productProperty);

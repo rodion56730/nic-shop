@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.nicetu.nicshop.dto.BucketDTO;
-import org.nicetu.nicshop.requests.AddProductRequest;
-import org.nicetu.nicshop.requests.CartProductRequest;
+import org.nicetu.nicshop.requests.AddItemRequest;
+import org.nicetu.nicshop.requests.CartItemRequest;
 import org.nicetu.nicshop.security.jwt.JwtAuthentication;
 import org.nicetu.nicshop.service.BucketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class BucketController {
     })
     @PostMapping("/addProduct")
     public void addProduct(
-            @Valid @RequestBody AddProductRequest request,
+            @Valid @RequestBody AddItemRequest request,
             JwtAuthentication authentication
     ) {
         bucketService.addProduct(request, authentication);
@@ -58,7 +58,7 @@ public class BucketController {
                     Товар не добавлен в корзину
                     """)
     })
-    public void addAmount(@Valid @RequestBody CartProductRequest request, JwtAuthentication authentication) {
+    public void addAmount(@Valid @RequestBody CartItemRequest request, JwtAuthentication authentication) {
         bucketService.addAmount(request, authentication);
     }
 
@@ -68,7 +68,7 @@ public class BucketController {
             @ApiResponse(responseCode = "404", description = "Товар не существует"),
             @ApiResponse(responseCode = "400", description = "Товар не добавлен в корзину")
     })
-    public void reduceAmount(@Valid @RequestBody CartProductRequest request, JwtAuthentication authentication) {
+    public void reduceAmount(@Valid @RequestBody CartItemRequest request, JwtAuthentication authentication) {
         bucketService.reduceAmount(request, authentication);
     }
 
@@ -90,7 +90,7 @@ public class BucketController {
             @ApiResponse(responseCode = "400", description = "Товар не добавлен в корзину")
     })
     public void deleteProduct(
-            @Valid @RequestBody CartProductRequest request,
+            @Valid @RequestBody CartItemRequest request,
             JwtAuthentication authentication
     ) {
         bucketService.deleteProduct(request, authentication);

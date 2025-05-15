@@ -15,7 +15,7 @@ import org.nicetu.nicshop.utils.validation.Marker;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductRequest {
+public class ItemRequest {
     @Null(groups = Marker.onCreate.class)
     @NotNull(groups = Marker.onUpdate.class)
     @Schema(description = "Идентификатор продукта. Указывается при редактировании", required = true)
@@ -57,5 +57,5 @@ public class ProductRequest {
 
     @NotNull
     @Schema(description = "Свойства товара", required = true)
-    private @Valid ProductPropertyRequest productPropertyRequest;
+    private @Valid ItemPropertyRequest itemPropertyRequest;
 }

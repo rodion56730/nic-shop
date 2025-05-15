@@ -44,7 +44,7 @@ CREATE TABLE items (
                        id BIGINT NOT NULL,
                        price BIGINT NOT NULL,
                        count BIGINT,
-                       description VARCHAR(255),
+                       description VARCHAR(1000),
                        image VARCHAR(255),
                        name VARCHAR(255),
                        product_property_id BIGINT NOT NULL,

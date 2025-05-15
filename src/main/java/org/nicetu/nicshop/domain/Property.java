@@ -25,5 +25,5 @@ public class Property {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_property_id")
-    private ProductProperty productProperty;
+    private ItemProperty itemProperty;
 }

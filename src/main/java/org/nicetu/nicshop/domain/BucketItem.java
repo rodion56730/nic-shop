@@ -22,7 +22,7 @@ public class BucketItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
-    private Item product;
+    private Item item;
 
     @Column(name = "count")
     private Long amount;

@@ -8,8 +8,8 @@ import jakarta.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class CartProductRequest {
-    @Schema(description = "Id товара в корзине")
+public class AddItemRequest {
+    @Schema(description = "Id товара, который надо добавить")
     @NotNull
     private Long productId;
 }

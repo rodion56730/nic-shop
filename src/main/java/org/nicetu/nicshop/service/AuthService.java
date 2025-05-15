@@ -7,7 +7,7 @@ import org.nicetu.nicshop.domain.RefreshToken;
 import org.nicetu.nicshop.domain.Role;
 import org.nicetu.nicshop.domain.User;
 import org.nicetu.nicshop.dto.JwtResponseDto;
-import org.nicetu.nicshop.repository.RefreshTokenRepo;
+import org.nicetu.nicshop.repository.RefreshTokenRepository;
 import org.nicetu.nicshop.repository.UserRepository;
 import org.nicetu.nicshop.requests.AuthRequest;
 import org.nicetu.nicshop.requests.RefreshTokenRequest;
@@ -15,7 +15,6 @@ import org.nicetu.nicshop.requests.RegisterRequest;
 import org.nicetu.nicshop.security.jwt.JwtProvider;
 import org.nicetu.nicshop.security.jwt.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,20 +24,20 @@ import java.util.Set;
 @Service
 public class AuthService {
     private final UserServiceImpl userService;
-    private final RefreshTokenRepo refreshTokenRepo;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepo;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public AuthService(UserServiceImpl userService,
-                       RefreshTokenRepo refreshTokenRepo,
+                       RefreshTokenRepository refreshTokenRepository,
                        UserRepository userRepo,
                        JwtProvider jwtProvider,
                        PasswordEncoder passwordEncoder
     ) {
         this.userService = userService;
-        this.refreshTokenRepo = refreshTokenRepo;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.userRepo = userRepo;
         this.jwtProvider = jwtProvider;
         this.passwordEncoder = passwordEncoder;
@@ -81,7 +80,7 @@ public class AuthService {
         String oldRefreshToken = request.getRefreshToken();
 
         if (jwtProvider.validateRefreshToken(oldRefreshToken)) {
-            RefreshToken refreshToken = refreshTokenRepo.findByToken(oldRefreshToken).orElseThrow(
+            RefreshToken refreshToken = refreshTokenRepository.findByToken(oldRefreshToken).orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh-токен не найден"));
 
             Claims claims = jwtProvider.getRefreshClaims(oldRefreshToken);
@@ -97,7 +96,7 @@ public class AuthService {
         TokenResponse access = jwtProvider.generateAccessToken(user);
         TokenResponse refresh = jwtProvider.generateRefreshToken(user);
         refreshToken.setToken(refresh.getToken());
-        refreshTokenRepo.save(refreshToken);
+        refreshTokenRepository.save(refreshToken);
 
         return new JwtResponseDto(access, refresh);
     }
@@ -105,6 +104,6 @@ public class AuthService {
     @Transactional
     public void deleteAllById(Long id) {
         User user = userService.getUserById(id);
-        refreshTokenRepo.deleteAllByUser(user);
+        refreshTokenRepository.deleteAllByUser(user);
     }
 }

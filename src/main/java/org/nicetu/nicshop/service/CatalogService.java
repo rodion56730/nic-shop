@@ -32,29 +32,29 @@ import java.util.stream.Collectors;
 
 @Service
 public class CatalogService {
-    private final CategoryRepo categoryRepo;
+    private final CategoryRepository categoryRepository;
     private final ItemRepository productRepo;
     private final UserRepository userRepo;
-    private final UserProductRepo userProductRepo;
-    private final UserFeedbackRepo userFeedbackRepo;
-    private final PhotoRepo photoRepo;
+    private final UserItemRepository userItemRepository;
+    private final UserFeedbackRepository userFeedbackRepository;
+    private final PhotoRepository photoRepository;
     private final CookieService cookieService;
 
     @Autowired
-    public CatalogService(CategoryRepo categoryRepo,
+    public CatalogService(CategoryRepository categoryRepository,
                           ItemRepository productRepo,
                           UserRepository userRepo,
-                          UserProductRepo userProductRepo,
-                          UserFeedbackRepo userFeedbackRepo,
-                          PhotoRepo photoRepo,
+                          UserItemRepository userItemRepository,
+                          UserFeedbackRepository userFeedbackRepository,
+                          PhotoRepository photoRepository,
                           CookieService cookieService
     ) {
-        this.categoryRepo = categoryRepo;
+        this.categoryRepository = categoryRepository;
         this.productRepo = productRepo;
         this.userRepo = userRepo;
-        this.userProductRepo = userProductRepo;
-        this.userFeedbackRepo = userFeedbackRepo;
-        this.photoRepo = photoRepo;
+        this.userItemRepository = userItemRepository;
+        this.userFeedbackRepository = userFeedbackRepository;
+        this.photoRepository = photoRepository;
         this.cookieService = cookieService;
     }
 
@@ -76,7 +76,7 @@ public class CatalogService {
             User user = userRepo.findById(authentication.getUserId()).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
 
-            List<BucketItem> userProducts = userProductRepo.findAllByUser(user);
+            List<BucketItem> userProducts = userItemRepository.findAllByUser(user);
             List<BucketItemDTO> userProductDtos = BucketItemMapper.fromUserProductsToDtos(userProducts, authentication);
 
             return CatalogMapper.fromProductDtosToCatalogDto(productDtos, userProductDtos, user);
@@ -150,17 +150,17 @@ public class CatalogService {
             UserFeedback userFeedback = new UserFeedback();
             userFeedback.setUser(user);
             userFeedback.setComment(request.getComment());
-            userFeedback.setProduct(product);
+            userFeedback.setItem(product);
             userFeedback.setFeedback(request.getFeedback());
 
-            userFeedbackRepo.save(userFeedback);
+            userFeedbackRepository.save(userFeedback);
 
             List<Photo> photos = new ArrayList<>();
             for(String picture: request.getPicturesUrls()) {
                 Photo photo = new Photo();
                 photo.setPictureUrl(picture);
                 photo.setUserFeedback(userFeedback);
-                photoRepo.save(photo);
+                photoRepository.save(photo);
                 photos.add(photo);
             }
             userFeedback.setPhotos(photos);
@@ -171,7 +171,7 @@ public class CatalogService {
     }
 
     public CatalogDTO getAllProductsFromCategory(Long id, JwtAuthentication authentication) {
-        Category category = categoryRepo.findById(id).orElseThrow(() ->
+        Category category = categoryRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Данной категории не существует"));
         List<Item> products = new ArrayList<>();
         CatalogUtil.getProductsFromSubcategoryAndChilds(products, category.getSubcategories());
@@ -180,7 +180,7 @@ public class CatalogService {
     }
 
     public CatalogDTO getAllProductsFromSubcategory(Long id, JwtAuthentication authentication) {
-        Category subcategory = categoryRepo.findById(id).orElseThrow(() ->
+        Category subcategory = categoryRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Данной подкатегории не существует"));
         List<Item> products = new ArrayList<>(subcategory.getProducts());
         CatalogUtil.getProductsFromSubcategoryAndChilds(products, subcategory.getChildren());

@@ -1,9 +1,9 @@
 package org.nicetu.nicshop.repository;
 
-import org.nicetu.nicshop.domain.ProductProperty;
+import org.nicetu.nicshop.domain.Property;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductPropertyRepo extends JpaRepository<ProductProperty, Long> {
+public interface PropertyRepository extends JpaRepository<Property, Long> {
 }

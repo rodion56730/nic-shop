@@ -24,4 +24,7 @@ public class CategoryRequest {
     @Size(max = 255)
     @Schema(description = "Название категории", required = true)
     private String name;
+
+    @Schema(description = "Идентификатор категории родителя. Указывается при редактировании", required = true)
+    private Long parentId;
 }

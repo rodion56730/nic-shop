@@ -9,11 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserProductRepo extends JpaRepository<BucketItem, Long> {
+public interface UserItemRepository extends JpaRepository<BucketItem, Long> {
     List<BucketItem> findAllByUser(User user);
 
     void deleteAllByUser(User user);
 
-    Optional<BucketItem> findByProductAndUser(Item item, User user);
+    Optional<BucketItem> findByItemAndUser(Item item, User user);
 
 }

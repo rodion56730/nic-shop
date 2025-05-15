@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PhotoRepo extends JpaRepository<Photo, Long> {
+public interface PhotoRepository extends JpaRepository<Photo, Long> {
     public List<Photo> getAllByUserFeedback(UserFeedback userFeedback);
 }

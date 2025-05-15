@@ -1,15 +1,18 @@
 package org.nicetu.nicshop.requests;
 
+;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.validation.constraints.NotNull;
 
-@Getter
 @Setter
-public class AddProductRequest {
-    @Schema(description = "Id товара, который надо добавить")
+@Getter
+@NoArgsConstructor
+public class DeleteFeedbackRequest {
     @NotNull
-    private Long productId;
+    @Schema(description = "Id отзыва на сайте")
+    private Long feedbackId;
 }

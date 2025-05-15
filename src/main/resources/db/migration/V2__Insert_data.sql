@@ -1,10 +1,9 @@
-insert into categories (id, name)
-values (1, 'Смартфоны'),
-       (2, 'Аудиотехника'),
-       (3, 'Аксессуары');
-
 insert into categories (id,parent_category, name)
-values (11, null,  'Apple'),
+values
+    (1, null,'Смартфоны'),
+    (2, null,'Аудиотехника'),
+    (3, null,'Аксессуары'),
+    (11, null,  'Apple'),
        (12, null,  'Samsung'),
        (13, null,  'Huawei'),
        (21, null,  'Наушники'),

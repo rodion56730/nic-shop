@@ -21,8 +21,6 @@ public class Item {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQUENCE_NAME)
-    @SequenceGenerator(name = SEQUENCE_NAME,sequenceName = SEQUENCE_NAME,allocationSize = 1)
     private Long id;
     private String name;
     private String description;
@@ -34,7 +32,7 @@ public class Item {
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<UserFeedback> userFeedbacks = new ArrayList<>();
 
     @Column(name = "discount")
@@ -47,6 +45,6 @@ public class Item {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_property_id")
-    private ProductProperty productProperty;
+    private ItemProperty itemProperty;
 
 }

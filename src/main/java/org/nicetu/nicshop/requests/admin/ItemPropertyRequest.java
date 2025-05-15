@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductPropertyRequest {
+public class ItemPropertyRequest {
     @Null(groups = Marker.onCreate.class)
     @NotNull(groups = Marker.onUpdate.class)
     @Schema(description = "Идентификатор свойств продукта. Указывается при редактировании", required = true)

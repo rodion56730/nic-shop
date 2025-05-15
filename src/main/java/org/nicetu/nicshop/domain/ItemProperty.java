@@ -13,15 +13,14 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductProperty {
+public class ItemProperty {
     @Id
     @Column(name = "product_property_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "productProperty", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "itemProperty", cascade = CascadeType.ALL)
     private List<Property> properties = new ArrayList<>();
 
-    @OneToMany(mappedBy = "productProperty", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "itemProperty", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
 }
