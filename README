@@ -1,0 +1,60 @@
+Интернет-магазин на Spring (PostgreSQL)
+
+Этот проект представляет собой интернет-магазин, разработанный на Spring Framework с использованием PostgreSQL в качестве СУБД. Ниже приведены инструкции по развертыванию и запуску проекта.
+Требования
+
+    Java 17 или выше
+
+    Maven 3.8+
+
+    PostgreSQL 14+
+
+    pgAdmin (опционально, для управления БД)
+
+    IDE (IntelliJ IDEA, Eclipse и т.д.)
+
+    Git (опционально)
+
+Установка и настройка
+1. Клонирование репозитория
+
+2. Настройка базы данных PostgreSQL
+
+    Установите PostgreSQL (если еще не установлен)
+
+    Создайте базу данных и пользователя: имя БД e-shop
+
+3. Настройка приложения
+
+    Для тестирования через doker:
+     1. адрес магазина: http://localhost:8181/
+     2. Данные для бд:
+        2.1 pgAdmin: http://localhost:5050/ login: admin@admin.com password: root
+        2.2 сервер: имя - любое , host: e-shop-bd , port: 5432 ,  db: e-shop
+            login: postgres password: password
+     Для локального тестирования:
+          1. адрес магазина: http://localhost:8080/
+          2. Данные для бд:
+            2.1 pgAdmin: локальный
+            2.2 сервер: имя - e-shop , host: localhost , port: 5432 ,  db: e-shop
+                 login: postgres password: password
+
+
+4. Запуск приложения через docker
+
+    docker-compose build --no-cache
+
+    docker-compose up
+
+    Приложение будет доступно по адресу: http://localhost:8181/
+
+Запуск приложения в среде разработки
+
+    Откройте проект в вашей IDE
+
+    Найдите и запустите главный класс NicShopApplication
+
+    Приложение будет доступно по адресу: http://localhost:8080/
+
+Миграции для БД сработают автоматически
+
