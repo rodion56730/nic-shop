@@ -1,10 +1,8 @@
 package org.nicetu.nicshop.mappers;
 
 
-
 import org.nicetu.nicshop.dto.BucketDTO;
 import org.nicetu.nicshop.dto.BucketItemDTO;
-import org.nicetu.nicshop.dto.CatalogDTO;
 
 import java.util.List;
 import java.util.stream.LongStream;

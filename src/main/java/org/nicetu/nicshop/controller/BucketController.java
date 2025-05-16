@@ -1,11 +1,11 @@
 package org.nicetu.nicshop.controller;
 
 
-
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.nicetu.nicshop.dto.BucketDTO;
 import org.nicetu.nicshop.requests.AddItemRequest;
@@ -15,8 +15,6 @@ import org.nicetu.nicshop.service.BucketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 @Tag(name = "Корзина", description = "Операции с товарами")
 @Slf4j

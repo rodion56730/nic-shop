@@ -1,11 +1,11 @@
 package org.nicetu.nicshop.controller;
 
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.nicetu.nicshop.dto.CatalogDTO;
 import org.nicetu.nicshop.dto.ItemDTO;
 import org.nicetu.nicshop.requests.FeedbackRequest;
@@ -14,8 +14,6 @@ import org.nicetu.nicshop.service.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 @Tag(name = "Каталог")
 @RestController

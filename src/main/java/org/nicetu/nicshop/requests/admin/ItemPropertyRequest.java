@@ -1,12 +1,11 @@
 package org.nicetu.nicshop.requests.admin;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import org.nicetu.nicshop.utils.validation.Marker;
 
 import java.util.List;

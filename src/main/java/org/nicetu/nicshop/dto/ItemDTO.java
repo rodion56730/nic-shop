@@ -1,9 +1,9 @@
 package org.nicetu.nicshop.dto;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.nicetu.nicshop.domain.ProductStatus;
 import org.nicetu.nicshop.domain.UserFeedback;
