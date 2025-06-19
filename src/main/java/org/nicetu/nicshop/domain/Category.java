@@ -1,6 +1,6 @@
 package org.nicetu.nicshop.domain;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -21,16 +21,13 @@ public class Category {
 
     private String name;
 
-    // Связь с родительской категорией
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent_category_id")
     private Category parent;
 
-    // Связь с дочерними категориями (подкатегориями)
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> subcategories = new ArrayList<>();
 
-    // Связь с товарами в этой категории
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> products = new ArrayList<>();
 

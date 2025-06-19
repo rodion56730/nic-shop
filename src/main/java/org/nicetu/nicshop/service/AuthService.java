@@ -2,7 +2,7 @@ package org.nicetu.nicshop.service;
 
 
 import io.jsonwebtoken.Claims;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import org.nicetu.nicshop.domain.RefreshToken;
 import org.nicetu.nicshop.domain.Role;
 import org.nicetu.nicshop.domain.User;
@@ -19,6 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -68,8 +72,8 @@ public class AuthService {
         user.setEmail(request.getUserEmail());
         user.setPassword(passwordEncoder.encode(request.getUserPassword()));
         user.setUsername(request.getUserEmail());
-        user.setRoles(Set.of(Role.CLIENT));
-        userRepo.save(user);
+        user.setRoles(new HashSet<>(Collections.singletonList(Role.CLIENT)));
+    userRepo.save(user);
 
 
         return user;

@@ -1,6 +1,6 @@
 package org.nicetu.nicshop.domain;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,9 +16,6 @@ import java.util.List;
 @Entity
 @Table(name = "items")
 public class Item {
-
-    private static final String SEQUENCE_NAME = "item_sequence";
-
 
     @Id
     private Long id;

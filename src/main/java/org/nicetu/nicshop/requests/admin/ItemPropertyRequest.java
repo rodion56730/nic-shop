@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import org.nicetu.nicshop.utils.validation.Marker;
 
 import java.util.List;

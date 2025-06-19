@@ -10,9 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories// явное указание пакета
+@EnableJpaRepositories
 public class NicShopApplication {
-
 
     public static void main(String[] args) {
         SpringApplication.run(NicShopApplication.class, args);

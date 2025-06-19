@@ -39,7 +39,6 @@ public class EmailService {
     }
 }
 
-// Кастомное исключение
 class EmailSendingException extends RuntimeException {
     public EmailSendingException(String message, Throwable cause) {
         super(message, cause);

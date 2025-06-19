@@ -1,6 +1,7 @@
 package org.nicetu.nicshop.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.var;
 import org.nicetu.nicshop.domain.Role;
 import org.nicetu.nicshop.domain.User;
 import org.nicetu.nicshop.dto.UserDTO;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class UserServiceImpl implements UserService {
                 .username(userDTO.getUsername())
                 .password(userDTO.getPassword())
                 .email(userDTO.getEmail())
-                .roles(new HashSet<>(Set.of(Role.CLIENT)))
+                .roles(new HashSet<>(Collections.singletonList(Role.CLIENT)))
                 .build();
         userRepository.save(user);
         return true;
@@ -50,7 +52,8 @@ public class UserServiceImpl implements UserService {
         if(user == null){
             throw new UsernameNotFoundException(username);
         }
-        List<GrantedAuthority> roles = new ArrayList<>(user.getRoles().stream().map(it -> new SimpleGrantedAuthority(it.name())).toList());
+        List<GrantedAuthority> roles = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(),
                 roles
@@ -84,7 +87,6 @@ public class UserServiceImpl implements UserService {
      * @return текущий пользователь
      */
     public User getCurrentUser() {
-        // Получение имени пользователя из контекста Spring Security
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getByUsername(username);
     }

@@ -21,13 +21,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.servlet.http.Cookie;
+import javax.servlet.http.Cookie;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -73,15 +74,21 @@ public class BucketService {
             List<String> values = Arrays.stream(cookies)
                     .filter(c -> c.getName().contains("user_product_"))
                     .map(Cookie::getValue)
-                    .toList();
+                    .collect(Collectors.toList());
 
             for (String value : values) {
                 BucketItemDTO dto = new BucketItemDTO();
-                JSONObject json = new JSONObject(URLDecoder.decode(value, StandardCharsets.UTF_8));
-                dto.setPictureUrl((String) json.get("pictureUrl"));
-                dto.setName((String) json.get("name"));
-                dto.setPrice(((Number) json.get("price")).longValue());
-                dto.setAmount(((Number) json.get("amount")).longValue());
+                try {
+                    String decodedValue = URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+                    JSONObject json = new JSONObject(decodedValue);
+                    dto.setPictureUrl((String) json.get("pictureUrl"));
+                    dto.setName((String) json.get("name"));
+                    dto.setPrice(((Number) json.get("price")).longValue());
+                    dto.setAmount(((Number) json.get("amount")).longValue());
+                } catch (Exception e) {
+                    // Обработка ошибок декодирования или парсинга JSON
+                    e.printStackTrace();
+                }
                 userProductDtos.add(dto);
             }
 
@@ -111,16 +118,22 @@ public class BucketService {
             }
         } else {
             Cookie cookie = cookieService.getCookie("user_product_" + product.getId());
-            JSONObject json = new JSONObject(URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8));
+            try {
+                String decodedValue = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8.name());
+                JSONObject json = new JSONObject(decodedValue);
+                long cookieValue = ((Number) json.get("amount")).longValue();
 
-            long cookieValue = ((Number) json.get("amount")).longValue();
-
-            if (cookieValue - 1 == 0) {
-                cookieService.deleteCookie("user_product_" + product.getId());
-            } else {
-                json.put("amount", cookieValue - 1);
-                cookieService.setCookie("user_product_" + product.getId(), String.valueOf(json));
+                if (cookieValue - 1 == 0) {
+                    cookieService.deleteCookie("user_product_" + product.getId());
+                } else {
+                    json.put("amount", cookieValue - 1);
+                    cookieService.setCookie("user_product_" + product.getId(), String.valueOf(json));
+                }
+            } catch (Exception e) {
+                // Обработка ошибок декодирования или парсинга JSON
+                e.printStackTrace();
             }
+
         }
     }
 
@@ -146,21 +159,27 @@ public class BucketService {
             }
         } else {
             Cookie cookie = cookieService.getCookie("user_product_" + product.getId());
-            JSONObject json = new JSONObject(URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8));
+            try {
+                String decodedValue = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8.name());
+                JSONObject json = new JSONObject(decodedValue);
+                long cookieValue = ((Number) json.get("amount")).longValue();
 
-            long cookieValue = ((Number) json.get("amount")).longValue();
-
-            if (product.getCount() < cookieValue + 1) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Такого количества товара нет на складе");
-            } else {
-                json.put("amount", cookieValue + 1);
-                cookieService.setCookie("user_product_" + product.getId(), String.valueOf(json));
+                if (product.getCount() < cookieValue + 1) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Такого количества товара нет на складе");
+                } else {
+                    json.put("amount", cookieValue + 1);
+                    cookieService.setCookie("user_product_" + product.getId(), String.valueOf(json));
+                }
+            } catch (Exception e) {
+                // Обработка ошибок декодирования или парсинга JSON
+                e.printStackTrace();
             }
+
         }
     }
 
     @Transactional
-    public void addProduct(AddItemRequest request, JwtAuthentication authentication) {
+    public void  addProduct(AddItemRequest request, JwtAuthentication authentication) {
         Item item = productRepo.findById(request.getProductId()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
 
@@ -259,7 +278,7 @@ public class BucketService {
 
             List<Cookie> sortCookies = Arrays.stream(cookies)
                     .filter(c -> c.getName().contains("user_product_"))
-                    .toList();
+                    .collect(Collectors.toList());
 
             if (sortCookies.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Корзина пустая");
@@ -274,12 +293,19 @@ public class BucketService {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Продукта " + product.getName()
                             + " нет в наличии");
                 }
-                JSONObject json = new JSONObject(URLDecoder.decode(sortCookie.getValue(), StandardCharsets.UTF_8));
-                long cookieValue = ((Number) json.get("amount")).longValue();
-                if (productAmount < cookieValue) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "В начилии только " + productAmount);
+                try {
+                    String decodedValue = URLDecoder.decode(sortCookie.getValue(), StandardCharsets.UTF_8.name());
+                    JSONObject json = new JSONObject(decodedValue);
+                    long cookieValue = ((Number) json.get("amount")).longValue();
+                    if (productAmount < cookieValue) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "В начилии только " + productAmount);
+                    }
+                    product.setCount((int) (productAmount - cookieValue));
+                } catch (Exception e) {
+                    // Обработка ошибок декодирования или парсинга JSON
+                    e.printStackTrace();
                 }
-                product.setCount((int) (productAmount - cookieValue));
+
                 productRepo.save(product);
                 cookieService.deleteCookie(sortCookie.getName());
             }

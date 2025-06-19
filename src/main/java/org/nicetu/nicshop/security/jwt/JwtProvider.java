@@ -44,9 +44,9 @@ public class JwtProvider {
         Instant now = Instant.now();
         Instant expiration = now.plus(jwtAccessDurationSec, ChronoUnit.SECONDS);
         String token = Jwts.builder()
-                .subject(String.valueOf(user.getId()))
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(expiration))
+                .setSubject(String.valueOf(user.getId()))
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(expiration))
                 .signWith(jwtAccessSecret)
                 .claim("roles", user.getRoles())
                 .compact();
@@ -61,23 +61,23 @@ public class JwtProvider {
         Instant now = Instant.now();
         Instant expiration = now.plus(jwtRefreshDurationDays, ChronoUnit.DAYS);
         String token = Jwts.builder()
-                .subject(String.valueOf(user.getId()))
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(expiration))
+                .setSubject(String.valueOf(user.getId()))
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(expiration))
                 .signWith(jwtRefreshSecret)
                 .compact();
         return new TokenResponse(token, expiration);
     }
 
     public boolean validateAccessToken(String accessToken) {
-        if (accessToken == null || accessToken.isBlank()) {
+        if (accessToken == null || accessToken.isEmpty()) {
             return false;
         }
         return validateToken(accessToken, jwtAccessSecret);
     }
 
     public boolean validateRefreshToken(String refreshToken) {
-        if (refreshToken == null || refreshToken.isBlank()) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
             return false;
         }
         return validateToken(refreshToken, jwtRefreshSecret);
@@ -86,9 +86,8 @@ public class JwtProvider {
     private boolean validateToken(String token, Key secret) {
         try {
             Jwts.parser()
-                    .verifyWith((SecretKey) secret)
-                    .build()
-                    .parseSignedClaims(token);
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
             log.error("Invalid token signature: {}", e.getMessage());
@@ -114,9 +113,8 @@ public class JwtProvider {
 
     private Claims getClaims(String token, Key secret) {
         return Jwts.parser()
-                .verifyWith((SecretKey) secret)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

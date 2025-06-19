@@ -18,7 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @Tag(name = "Администратор")
 @RestController
@@ -49,10 +49,7 @@ public class AdminController {
 
     @Operation(summary = "Добавить подкатегорию")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = """
-                    Категории не существует
-                    Родительской подкатегории не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = "Категории не существует Родительской подкатегории не существует ")
     })
     @Validated(Marker.onCreate.class)
     @PostMapping("/subcategory")
@@ -62,11 +59,7 @@ public class AdminController {
 
     @Operation(summary = "Редактировать подкатегорию")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = """
-                    Категории не существует
-                    Подкатегории не существует
-                    Родительской подкатегории не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = " Категории не существует \n Подкатегории не существует \n Родительской подкатегории не существует ")
     })
     @Validated(Marker.onUpdate.class)
     @PutMapping("/subcategory")
@@ -76,10 +69,7 @@ public class AdminController {
 
     @Operation(description = "Перемещение подкатегорию в другую категорию")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = """
-                    Категории не существует
-                    Подкатегории не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = "Категории не существует \n Подкатегории не существует ")
     })
     @PutMapping("/moveSubcategoryToCategory")
     public void moveSubcategoryToCategory(@Valid @RequestBody MoveSubcategoryToCategoryRequest request) {
@@ -88,10 +78,7 @@ public class AdminController {
 
     @Operation(description = "Перемещение подкатегории внутри категории")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = """
-                    Подкатегории не существует
-                    Родительской подкатегории не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = "Подкатегории не существует \n Родительской подкатегории не существует ")
     })
     @PutMapping("/moveSubcategory")
     public void moveSubcategory(@Valid @RequestBody MoveSubcategoryRequest request) {
@@ -108,10 +95,7 @@ public class AdminController {
 
     @Operation(description = "Отредактировать существующий товар")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = """
-                    Подкатегории не существует
-                    Товара не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = " Подкатегории не существует \n Товара не существует")
     })
     @Validated(Marker.onUpdate.class)
     @PutMapping("/product")
@@ -129,10 +113,7 @@ public class AdminController {
 
     @Operation(description = "Редактировать характеристику")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = """
-                    Неверный id набора свойств
-                    Свойства не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = "Неверный id набора свойств Свойства не существует ")
     })
     @Validated(Marker.onUpdate.class)
     @PutMapping("/property")
@@ -142,10 +123,7 @@ public class AdminController {
 
     @Operation(description = "Редактировать характеристику товара")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = """
-                    Свойства не существует
-                    Товара не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = " Свойства не существует Товара не существует ")
     })
     @PutMapping("/product/{id}/updateProperty")
     public void updateProductProperty(@PathVariable Long id, @Valid @RequestBody PropertyRequest request) {
@@ -176,10 +154,7 @@ public class AdminController {
     @Operation(description = "Удаление отзыва полностью")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Товар не существует"),
-            @ApiResponse(responseCode = "404", description = """
-                    Отзыва не существует
-                    Товара не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = "Отзыва не существует \n Товара не существует ")
     })
     @DeleteMapping("/catalog/product/{id}/deleteFeedback")
     public void deleteFeedback(@Valid @RequestBody DeleteFeedbackRequest request, @PathVariable Long id) {
@@ -189,10 +164,7 @@ public class AdminController {
     @Operation(description = "Удаление фотографий из отзыва")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Товар не существует"),
-            @ApiResponse(responseCode = "404", description = """
-                    Отзыва не существует
-                    Товара не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = "Отзыва не существует \n Товара не существует ")
     })
     @DeleteMapping("/catalog/product/{id}/deletePhotosFeedback")
     public void deletePhotosFeedback(@Valid @RequestBody DeleteFeedbackRequest request, @PathVariable Long id) {
@@ -202,10 +174,7 @@ public class AdminController {
     @Operation(description = "Удаление комментария из отзыва")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Товар не существует"),
-            @ApiResponse(responseCode = "404", description = """
-                    Отзыва не существует
-                    Товара не существует
-                    """)
+            @ApiResponse(responseCode = "404", description = "Отзыва не существует \n Товара не существует ")
     })
     @PutMapping("/catalog/product/{id}/deleteCommentFeedback")
     public void deleteCommentFeedback(@Valid @RequestBody DeleteFeedbackRequest request, @PathVariable Long id) {

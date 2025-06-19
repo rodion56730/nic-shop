@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @Tag(name = "Корзина", description = "Операции с товарами")
 @Slf4j
@@ -53,10 +53,7 @@ public class BucketController {
     @PutMapping("/cart/addAmount")
     @ApiResponses({
             @ApiResponse(responseCode = "404", description = "Товар не существует"),
-            @ApiResponse(responseCode = "400", description = """
-                    Превышен лимит товара
-                    Товар не добавлен в корзину
-                    """)
+            @ApiResponse(responseCode = "400", description = "Превышен лимит товара \n Товар не добавлен в корзину")
     })
     public void addAmount(@Valid @RequestBody CartItemRequest request, JwtAuthentication authentication) {
         bucketService.addAmount(request, authentication);

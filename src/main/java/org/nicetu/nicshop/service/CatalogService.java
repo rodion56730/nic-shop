@@ -1,6 +1,7 @@
 package org.nicetu.nicshop.service;
 
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.nicetu.nicshop.domain.*;
 import org.nicetu.nicshop.dto.BucketItemDTO;
@@ -21,7 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.servlet.http.Cookie;
+import javax.servlet.http.Cookie;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -91,15 +93,29 @@ public class CatalogService {
             List<String> values = Arrays.stream(cookies)
                     .filter(c -> c.getName().contains("user_product_"))
                     .map(Cookie::getValue)
-                    .toList();
+                    .collect(Collectors.toList());
 
             for (String value : values) {
                 BucketItemDTO dto = new BucketItemDTO();
-                JSONObject json = new JSONObject(URLDecoder.decode(value, StandardCharsets.UTF_8));
-                dto.setPictureUrl((String) json.get("pictureUrl"));
-                dto.setName((String) json.get("name"));
-                dto.setPrice(((Number) json.get("price")).longValue());
-                dto.setAmount(((Number) json.get("amount")).longValue());
+                try {
+
+                    String decodedValue = URLDecoder.decode(value, "UTF-8");
+
+
+                    JSONObject json = new JSONObject(decodedValue);
+                    dto.setPictureUrl((String) json.get("pictureUrl"));
+                    dto.setName((String) json.get("name"));
+                    dto.setPrice(((Number) json.get("price")).longValue());
+                    dto.setAmount(((Number) json.get("amount")).longValue());
+
+                } catch (UnsupportedEncodingException e) {
+
+                    throw new RuntimeException("UTF-8 encoding not supported", e);
+                } catch (JSONException e) {
+
+                    throw new RuntimeException("Invalid JSON format", e);
+                }
+
                 userProductDtos.add(dto);
             }
 
@@ -121,7 +137,7 @@ public class CatalogService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
         List<UserFeedback> userFeedbacks = product.getUserFeedbacks().stream()
                 .sorted(Comparator.comparingLong(UserFeedback::getFeedback))
-                .toList();
+                .collect(Collectors.toList());
         List<UserFeedbackDto> userFeedbackDtos = UserFeedbackMapper.fromUserFeedbacksToDtos(userFeedbacks);
 
         return ItemMapper.fromProductToDto(product, authentication, userFeedbackDtos);
@@ -132,7 +148,7 @@ public class CatalogService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
         List<UserFeedback> userFeedbacks = product.getUserFeedbacks().stream()
                 .sorted(Comparator.comparingLong(UserFeedback::getFeedback).reversed())
-                .toList();
+                .collect(Collectors.toList());
         List<UserFeedbackDto> userFeedbackDtos = UserFeedbackMapper.fromUserFeedbacksToDtos(userFeedbacks);
 
         return ItemMapper.fromProductToDto(product, authentication, userFeedbackDtos);

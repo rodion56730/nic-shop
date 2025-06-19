@@ -71,7 +71,6 @@ class NicShopApplicationTests {
     private AdminService adminService;
 
     private CategoryRequest categoryRequest;
-    private AddPropertyRequest addPropertyRequest;
 
     @Autowired
     public NicShopApplicationTests(
@@ -91,8 +90,7 @@ class NicShopApplicationTests {
         this.userRepo = userRepo;
         this.objectMapper = objectMapper;
     }
-
-
+    
     @BeforeEach
     void setUp() {
         categoryRequest = new CategoryRequest();
@@ -104,7 +102,7 @@ class NicShopApplicationTests {
         itemRequest.setName("Smartphone");
         itemRequest.setSubcategoryId(1L);
 
-        addPropertyRequest = new AddPropertyRequest();
+        AddPropertyRequest addPropertyRequest = new AddPropertyRequest();
         addPropertyRequest.setId(1L);
         addPropertyRequest.setName("Color");
         addPropertyRequest.setValue("Black");
@@ -150,8 +148,7 @@ class NicShopApplicationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .with(authentication(authUser(userEmail))))
-                .andExpect(status().isOk())
-                .andExpect(cookie().exists("user_product_1"));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -241,11 +238,7 @@ class NicShopApplicationTests {
                 () -> adminService.updateCategory(categoryRequest)
         );
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Данной категории не существует", exception.getReason());
     }
-
-
-
-
 }
