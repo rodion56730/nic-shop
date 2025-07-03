@@ -1,13 +1,11 @@
 package org.nicetu.nicshop.dto;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.nicetu.nicshop.domain.ProductStatus;
 import org.nicetu.nicshop.domain.UserFeedback;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -16,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemDTO {
+
     private Long id;
 
     private String pictureUrl;
@@ -31,6 +30,7 @@ public class ItemDTO {
 
     private List<UserFeedbackDto> userFeedbackDtoList;
 
-    public ItemDTO(Long id, String image, String name, String description, ProductStatus status, BigDecimal price, List<UserFeedback> userFeedbacks) {
-    }
+    public ItemDTO(Long id, String image, String name, String description, ProductStatus status,
+                   BigDecimal price, List<UserFeedback> userFeedbacks) {}
+
 }

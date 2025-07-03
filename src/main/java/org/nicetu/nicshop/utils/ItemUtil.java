@@ -1,11 +1,11 @@
 package org.nicetu.nicshop.utils;
 
-
 import org.nicetu.nicshop.domain.Item;
 import org.nicetu.nicshop.domain.ProductStatus;
 import org.nicetu.nicshop.security.jwt.JwtAuthentication;
 
 public interface ItemUtil {
+
     static Long getPrice(Item item, JwtAuthentication authentication) {
         if (authentication != null && item.getDiscount()) {
             return item.getDiscountPrice();
@@ -24,4 +24,5 @@ public interface ItemUtil {
             return ProductStatus.EMPTY;
         }
     }
+
 }

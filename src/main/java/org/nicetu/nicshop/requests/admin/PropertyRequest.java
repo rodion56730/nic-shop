@@ -1,16 +1,17 @@
 package org.nicetu.nicshop.requests.admin;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class PropertyRequest {
+
     @NotNull
     @Schema(description = "Идентификатор свойства", required = true)
     private Long id;
@@ -22,4 +23,5 @@ public class PropertyRequest {
     @NotBlank
     @Schema(description= "Значение свойства", required = true)
     private String value;
+
 }

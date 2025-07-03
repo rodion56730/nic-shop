@@ -1,9 +1,12 @@
 package org.nicetu.nicshop.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
 
 @Builder
 @Getter
@@ -11,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BucketDTO {
+
     @Schema(description = "Список товаров в корзине")
     private List<BucketItemDTO> items;
 
@@ -19,4 +23,5 @@ public class BucketDTO {
 
     @Schema(description = "Общая цена товаров в корзине")
     private Long fullPrice;
+
 }

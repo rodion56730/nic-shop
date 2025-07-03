@@ -1,17 +1,18 @@
 package org.nicetu.nicshop.requests;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class RegisterRequest {
+
     @Schema(description = "Имя пользователя", required = true)
     @NotBlank
     private String firstName;
@@ -29,4 +30,5 @@ public class RegisterRequest {
     @Schema(description = "Пароль пользователя", required = true)
     @NotBlank
     private String userPassword;
+
 }

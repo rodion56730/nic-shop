@@ -1,9 +1,17 @@
 package org.nicetu.nicshop.domain;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 @Entity
 @Table(name = "property")
@@ -11,6 +19,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Property {
+
     @Id
     @Column(name = "property_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +34,5 @@ public class Property {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_property_id")
     private ItemProperty itemProperty;
+
 }

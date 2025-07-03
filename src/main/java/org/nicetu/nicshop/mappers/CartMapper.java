@@ -1,13 +1,12 @@
 package org.nicetu.nicshop.mappers;
 
-
 import org.nicetu.nicshop.dto.BucketDTO;
 import org.nicetu.nicshop.dto.BucketItemDTO;
-
 import java.util.List;
 import java.util.stream.LongStream;
 
 public interface CartMapper {
+
     static BucketDTO fromUserProductDTOListToCartDto(List<BucketItemDTO> bucketItemDTOList) {
         BucketDTO bucketDTO = new BucketDTO();
         bucketDTO.setItems(bucketItemDTOList);
@@ -20,4 +19,5 @@ public interface CartMapper {
 
         return bucketDTO;
     }
+
 }

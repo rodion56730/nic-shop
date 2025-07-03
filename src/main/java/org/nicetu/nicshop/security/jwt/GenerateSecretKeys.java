@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
  * Утилита для генерации секретных ключей
  */
 public class GenerateSecretKeys {
+
     public static void main(String[] args) {
         System.out.println(generateKey());
         System.out.println(generateKey());
@@ -16,4 +17,5 @@ public class GenerateSecretKeys {
     private static String generateKey() {
         return Encoders.BASE64.encode(Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded());
     }
+
 }

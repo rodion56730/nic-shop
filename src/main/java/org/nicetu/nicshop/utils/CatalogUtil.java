@@ -1,12 +1,10 @@
 package org.nicetu.nicshop.utils;
 
-
-
 import org.nicetu.nicshop.domain.Category;
 import org.nicetu.nicshop.domain.Item;
 import org.nicetu.nicshop.domain.User;
-
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface CatalogUtil {
     static String getInitials(User user) {
@@ -19,10 +17,11 @@ public interface CatalogUtil {
     static void getProductsFromSubcategoryAndChilds(List<Item> products, List<Category> childSubcategories) {
         products.addAll(childSubcategories.stream()
                 .flatMap(s -> s.getProducts().stream())
-                .toList());
+                .collect(Collectors.toList()));
 
         for(Category subcategory : childSubcategories) {
             getProductsFromSubcategoryAndChilds(products, subcategory.getChildren());
         }
     }
+
 }

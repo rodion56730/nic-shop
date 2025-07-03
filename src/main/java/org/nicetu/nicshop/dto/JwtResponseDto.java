@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.nicetu.nicshop.security.jwt.TokenResponse;
-
 import java.time.Instant;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class JwtResponseDto {
+
     @Schema(description = "Тип токена")
     private final String tokenType = "Bearer";
 
@@ -33,5 +33,5 @@ public class JwtResponseDto {
         this.refreshToken = refresh.token;
         this.refreshExpiresIn = refresh.expiresIn;
     }
-}
 
+}

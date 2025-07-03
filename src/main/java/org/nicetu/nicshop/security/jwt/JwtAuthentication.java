@@ -1,13 +1,10 @@
 package org.nicetu.nicshop.security.jwt;
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.nicetu.nicshop.domain.Role;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
 import java.util.Collection;
 import java.util.Set;
 
@@ -15,6 +12,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class JwtAuthentication implements Authentication {
+
     private boolean authenticated;
     private Long userId;
     private Set<Role> roles;
@@ -53,5 +51,5 @@ public class JwtAuthentication implements Authentication {
     public String getName() {
         return String.valueOf(userId);
     }
-}
 
+}

@@ -1,18 +1,17 @@
 package org.nicetu.nicshop.controller;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import org.nicetu.nicshop.domain.User;
 import org.nicetu.nicshop.dto.JwtResponseDto;
 import org.nicetu.nicshop.requests.AuthRequest;
 import org.nicetu.nicshop.requests.RefreshTokenRequest;
 import org.nicetu.nicshop.requests.RegisterRequest;
 import org.nicetu.nicshop.security.jwt.JwtAuthentication;
-import org.nicetu.nicshop.service.AuthService;
+import org.nicetu.nicshop.service.api.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,5 +82,5 @@ public class AuthController {
         authService.deleteAllById(authentication.getUserId());
         return ResponseEntity.ok().build();
     }
-}
 
+}

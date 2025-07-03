@@ -1,6 +1,10 @@
 package org.nicetu.nicshop.security.jwt;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -8,18 +12,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.nicetu.nicshop.domain.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-
-
 @Slf4j
 @Component
 public class JwtProvider {
+
     private final SecretKey jwtAccessSecret;
     private final SecretKey jwtRefreshSecret;
     private final int jwtAccessDurationSec;
@@ -27,13 +29,15 @@ public class JwtProvider {
 
     public JwtProvider(
             @Value("${shop.jwt.secret.access}") String jwtAccessSecret,
-            @Value("${shop.jwt.secret.refresh}") String jwtRefreshSecret
+            @Value("${shop.jwt.secret.refresh}") String jwtRefreshSecret,
+            @Value("${SHOP_JWT_EXPIRES_ACCESS_SEC:604800}") int jwtAccessDurationSec,
+            @Value("${SHOP_JWT_EXPIRES_REFRESH_DAYS:30}") int jwtRefreshDurationDays
     ) {
 
         this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret));
         this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret));
-        this.jwtAccessDurationSec = 604800;
-        this.jwtRefreshDurationDays = 30;
+        this.jwtAccessDurationSec = jwtAccessDurationSec;
+        this.jwtRefreshDurationDays = jwtRefreshDurationDays;
     }
 
     public TokenResponse generateAccessToken(User user) {
@@ -44,9 +48,9 @@ public class JwtProvider {
         Instant now = Instant.now();
         Instant expiration = now.plus(jwtAccessDurationSec, ChronoUnit.SECONDS);
         String token = Jwts.builder()
-                .subject(String.valueOf(user.getId()))
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(expiration))
+                .setSubject(String.valueOf(user.getId()))
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(expiration))
                 .signWith(jwtAccessSecret)
                 .claim("roles", user.getRoles())
                 .compact();
@@ -61,23 +65,23 @@ public class JwtProvider {
         Instant now = Instant.now();
         Instant expiration = now.plus(jwtRefreshDurationDays, ChronoUnit.DAYS);
         String token = Jwts.builder()
-                .subject(String.valueOf(user.getId()))
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(expiration))
+                .setSubject(String.valueOf(user.getId()))
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(expiration))
                 .signWith(jwtRefreshSecret)
                 .compact();
         return new TokenResponse(token, expiration);
     }
 
     public boolean validateAccessToken(String accessToken) {
-        if (accessToken == null || accessToken.isBlank()) {
+        if (accessToken == null || accessToken.isEmpty()) {
             return false;
         }
         return validateToken(accessToken, jwtAccessSecret);
     }
 
     public boolean validateRefreshToken(String refreshToken) {
-        if (refreshToken == null || refreshToken.isBlank()) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
             return false;
         }
         return validateToken(refreshToken, jwtRefreshSecret);
@@ -86,9 +90,8 @@ public class JwtProvider {
     private boolean validateToken(String token, Key secret) {
         try {
             Jwts.parser()
-                    .verifyWith((SecretKey) secret)
-                    .build()
-                    .parseSignedClaims(token);
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
             log.error("Invalid token signature: {}", e.getMessage());
@@ -114,9 +117,9 @@ public class JwtProvider {
 
     private Claims getClaims(String token, Key secret) {
         return Jwts.parser()
-                .verifyWith((SecretKey) secret)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
+
 }

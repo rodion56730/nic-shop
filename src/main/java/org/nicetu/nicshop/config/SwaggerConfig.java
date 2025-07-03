@@ -10,7 +10,6 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
 public class SwaggerConfig {
 
@@ -31,15 +30,15 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-                .title("Phone Shop")
+                .title("Nic Shop")
                 .description("Тестовый проект интернет-магазина")
                 .version("1.0")
                 .contact(new Contact()
-                        .name("Your Name")
-                        .url("https://example.com")
-                        .email("contact@example.com"))
+                        .name("Rodion Gorchatov")
+                        .email("rodion56730@gmail.com"))
                 .license(new License()
                         .name("Apache 2.0")
                         .url("http://www.apache.org/licenses/LICENSE-2.0"));
     }
+
 }

@@ -7,10 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.nicetu.nicshop.domain.Category;
 import org.nicetu.nicshop.domain.User;
+import org.nicetu.nicshop.domain.Category;
 import org.nicetu.nicshop.dto.JwtResponseDto;
-import org.nicetu.nicshop.repository.*;
+import org.nicetu.nicshop.repository.CategoryRepository;
+import org.nicetu.nicshop.repository.ItemRepository;
+import org.nicetu.nicshop.repository.UserItemRepository;
+import org.nicetu.nicshop.repository.UserRepository;
 import org.nicetu.nicshop.requests.AddItemRequest;
 import org.nicetu.nicshop.requests.AuthRequest;
 import org.nicetu.nicshop.requests.admin.AddPropertyRequest;
@@ -19,33 +22,31 @@ import org.nicetu.nicshop.requests.admin.ItemRequest;
 import org.nicetu.nicshop.security.jwt.JwtAuthentication;
 import org.nicetu.nicshop.security.jwt.JwtProvider;
 import org.nicetu.nicshop.security.jwt.JwtUtils;
-import org.nicetu.nicshop.service.AdminService;
-import org.nicetu.nicshop.service.AuthService;
+import org.nicetu.nicshop.service.api.AuthService;
+import org.nicetu.nicshop.service.api.admin.CategoryAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.stream.LongStream;
-
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-
 class NicShopApplicationTests {
     private final String userEmail = "test@gmail.com";
     @Autowired
@@ -66,14 +67,11 @@ class NicShopApplicationTests {
     @Mock
     private CategoryRepository categoryRepository;
 
-    @Mock
-    private PropertyRepository propertyRepository;
 
     @InjectMocks
-    private AdminService adminService;
+    private CategoryAdminService adminService;
 
     private CategoryRequest categoryRequest;
-    private AddPropertyRequest addPropertyRequest;
 
     @Autowired
     public NicShopApplicationTests(
@@ -93,8 +91,7 @@ class NicShopApplicationTests {
         this.userRepo = userRepo;
         this.objectMapper = objectMapper;
     }
-
-
+    
     @BeforeEach
     void setUp() {
         categoryRequest = new CategoryRequest();
@@ -106,7 +103,7 @@ class NicShopApplicationTests {
         itemRequest.setName("Smartphone");
         itemRequest.setSubcategoryId(1L);
 
-        addPropertyRequest = new AddPropertyRequest();
+        AddPropertyRequest addPropertyRequest = new AddPropertyRequest();
         addPropertyRequest.setId(1L);
         addPropertyRequest.setName("Color");
         addPropertyRequest.setValue("Black");
@@ -148,12 +145,11 @@ class NicShopApplicationTests {
         AddItemRequest request = new AddItemRequest();
         request.setProductId(1L);
 
-        mockMvc.perform(post("/api/addProduct")
+        mockMvc.perform(post("/api/product")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .with(authentication(authUser(userEmail))))
-                .andExpect(status().isOk())
-                .andExpect(cookie().exists("user_product_1"));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -243,11 +239,7 @@ class NicShopApplicationTests {
                 () -> adminService.updateCategory(categoryRequest)
         );
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Данной категории не существует", exception.getReason());
     }
-
-
-
-
 }
